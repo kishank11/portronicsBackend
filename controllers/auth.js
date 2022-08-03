@@ -1,12 +1,16 @@
 const User = require("../models/User");
-const CryptoJS = require("crypto-js");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
+  let { username, password, email } = req.body;
+  const salt = await bcrypt.genSalt(12);
+  password = await bcrypt.hash(password, salt);
+  console.log(password);
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
-    password: req.body.password,
+    password: password,
   });
 
   try {
@@ -21,9 +25,17 @@ const login = async (req, res) => {
   try {
     const user = await User.findOne({
       username: req.body.username,
-      password: req.body.password,
     });
-    if (!user) return res.json("WRONG CREDENTIALS");
+    if (user) {
+      const validPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
+
+      if (!validPassword) {
+        res.status(400).json({ error: "Invalid Password" });
+      }
+    }
     const accessToken = jwt.sign(
       {
         id: user._id,

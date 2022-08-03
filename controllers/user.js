@@ -1,7 +1,13 @@
 const User = require("../models/User");
-const CryptoJS = require("crypto-js");
+const bcrypt = require("bcrypt");
 
 const updateUser = async (req, res) => {
+  if (req.body.password) {
+    const salt = await bcrypt.genSalt(12);
+    let password = await bcrypt.hash(req.body.password, salt);
+    console.log(password);
+    req.body.password = password;
+  }
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
