@@ -16,7 +16,9 @@ const cors = require("cors");
 dotenv.config();
 
 mongoose
-  .connect("mongodb://127.0.0.1/portronics")
+  .connect(
+    `mongodb+srv://kishank:${process.env.pass}@cluster0.hgmgv.mongodb.net/portronics?retryWrites=true&w=majority`
+  )
   .then(() => console.log("DB Connection Successfull!"))
   .catch((err) => {
     console.log(err);

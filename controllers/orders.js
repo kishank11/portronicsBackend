@@ -9,6 +9,7 @@ const addOrder = async (req, res) => {
     if (err) {
       console.log(err.message);
     } else {
+      console.log(result);
       console.log(result[0].discount);
 
       let amt = parseFloat(amount - (amount * result[0].discount) / 100);
