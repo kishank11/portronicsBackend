@@ -8,7 +8,7 @@ const addOrder = async (req, res) => {
   const data = await Coupon.find({ code: couponcode }, async (err, result) => {
     if (err) {
       console.log(err.message);
-    } else {
+    } else if (result.length > 0) {
       console.log(result);
       console.log(result[0].discount);
 
@@ -29,6 +29,7 @@ const addOrder = async (req, res) => {
           res.json(err);
         });
     }
+    return res.json({ msg: "coupon not found" });
   }).clone();
 
   console.log(data);
