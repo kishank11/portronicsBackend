@@ -12,7 +12,6 @@ const register = async (req, res) => {
     email: req.body.email,
     password: password,
   });
-
   try {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);

@@ -2,37 +2,44 @@ const Order = require("../models/Order");
 const Coupon = require("../models/Coupon");
 
 const addOrder = async (req, res) => {
-  let { userId, products, couponcode, amount, address, status } = req.body;
+  try {
+    let { userId, products, couponcode, amount, address, status } = req.body;
 
-  console.log(req.body);
-  const data = await Coupon.find({ code: couponcode }, async (err, result) => {
-    if (err) {
-      console.log(err.message);
-    } else if (result.length > 0) {
-      console.log(result);
-      console.log(result[0].discount);
+    console.log(req.body);
+    const data = await Coupon.find(
+      { code: couponcode },
+      async (err, result) => {
+        if (err) {
+          console.log(err.message);
+        } else if (result.length > 0) {
+          console.log(result);
+          console.log(result[0].discount);
 
-      let amt = parseFloat(amount - (amount * result[0].discount) / 100);
+          let amt = parseFloat(amount - (amount * result[0].discount) / 100);
 
-      await Order.create({
-        userId,
-        products,
-        amount: amt,
-        couponcode,
-        address,
-        status,
-      })
-        .then((data) => {
-          res.json(data);
-        })
-        .catch((err) => {
-          res.json(err);
-        });
-    }
-    return res.json({ msg: "coupon not found" });
-  }).clone();
+          await Order.create({
+            userId,
+            products,
+            amount: amt,
+            couponcode,
+            address,
+            status,
+          })
+            .then((data) => {
+              res.json(data);
+            })
+            .catch((err) => {
+              res.json(err);
+            });
+        }
+        return res.json({ msg: "coupon not found" });
+      }
+    ).clone();
 
-  console.log(data);
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const updateOrder = async (req, res) => {
@@ -87,14 +94,18 @@ const getAllOrders = async (req, res) => {
 };
 
 const ordersSold = async (req, res) => {
-  const result = await Order.find({ sold: true })
-    .then((data) => {
-      res.status(201).json(data);
-    })
-    .catch((e) => {
-      res.status(402).json(e);
-    });
-  console.log(result);
+  try {
+    const result = await Order.find({ sold: true })
+      .then((data) => {
+        res.status(201).json(data);
+      })
+      .catch((e) => {
+        res.status(402).json(e);
+      });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 };
 module.exports = {
   addOrder,
